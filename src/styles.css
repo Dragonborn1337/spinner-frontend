@@ -20,10 +20,8 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-bottom: 70px;
+    padding-bottom: 80px;
 }
-
-/* HEADER */
 
 .header {
     padding: 15px;
@@ -32,8 +30,6 @@ body {
     font-weight: bold;
     font-size: 18px;
 }
-
-/* SCREENS */
 
 .screen {
     display: none;
@@ -53,7 +49,7 @@ body {
     overflow: hidden;
     background: #222;
     border-radius: 12px;
-    margin: 30px 0;
+    margin: 40px 0;
     position: relative;
     border: 2px solid #333;
 }
@@ -73,13 +69,12 @@ body {
     display: flex;
     align-items: center;
     height: 100%;
-    transition: transform 2s cubic-bezier(.2,.8,.3,1);
 }
 
 .item {
     min-width: 100px;
     text-align: center;
-    font-size: 40px;
+    font-size: 42px;
 }
 
 /* BUTTON */
@@ -93,10 +88,6 @@ body {
     color: white;
     font-size: 18px;
     cursor: pointer;
-}
-
-#spinBtn:disabled {
-    background: gray;
 }
 
 /* NAV */

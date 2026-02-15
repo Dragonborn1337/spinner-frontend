@@ -1,17 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinner Mini App</title>
+</head>
 <body>
-<meta charset="UTF-8">
+
 <div class="app">
 
-    <!-- HEADER -->
     <div class="header">
-        <div class="balance">
-            ⭐ <span id="stars">100</span>
-            &nbsp;&nbsp;
-            TON <span id="ton">0.0</span>
-        </div>
+        ⭐ <span id="stars">100</span>
+        &nbsp;&nbsp;
+        TON <span id="ton">0.0</span>
     </div>
 
-    <!-- SCREENS -->
+    <!-- GAME SCREEN -->
     <div id="gameScreen" class="screen active">
         <div class="spinner-container">
             <div class="indicator"></div>
@@ -20,18 +24,19 @@
         <button id="spinBtn">🎰 Крутить (10 ⭐)</button>
     </div>
 
+    <!-- PROFILE SCREEN -->
     <div id="profileScreen" class="screen">
         <h2>Профиль</h2>
         <p>ID: <span id="userId">-</span></p>
         <p>Username: <span id="username">-</span></p>
     </div>
 
+    <!-- ADMIN SCREEN -->
     <div id="adminScreen" class="screen">
         <h2>Админ панель</h2>
-        <p>Тут будет управление пользователями</p>
+        <p>Тут будет управление</p>
     </div>
 
-    <!-- NAVIGATION -->
     <div class="nav">
         <button data-screen="gameScreen">🎰 Игра</button>
         <button data-screen="profileScreen">👤 Профиль</button>
@@ -42,3 +47,4 @@
 
 <script type="module" src="/src/main.js"></script>
 </body>
+</html>

@@ -1,67 +1,90 @@
-const items = ["🎁", "⭐", "💎", "⭐", "🎁", "💎", "⭐", "🎁"];
 const reel = document.getElementById("reel");
 const spinBtn = document.getElementById("spinBtn");
 const starsEl = document.getElementById("stars");
 
-let stars = 100;
-let spinning = false;
+const items = [
+    { symbol: "🎁", reward: 0 },
+    { symbol: "⭐", reward: 5 },
+    { symbol: "💎", reward: 20 },
+];
 
-// создаем длинную ленту
-function generateReel() {
+let stars = 100;
+let isSpinning = false;
+
+const itemWidth = 100;
+
+function buildReel() {
     reel.innerHTML = "";
 
-    for (let i = 0; i < 15; i++) {
-        items.forEach(symbol => {
+    for (let i = 0; i < 30; i++) {
+        items.forEach(item => {
             const div = document.createElement("div");
             div.className = "item";
-            div.textContent = symbol;
+            div.textContent = item.symbol;
             reel.appendChild(div);
         });
     }
 }
 
-generateReel();
+buildReel();
+
+function updateBalance() {
+    starsEl.textContent = stars;
+}
 
 spinBtn.addEventListener("click", () => {
-    if (spinning) return;
+    if (isSpinning) return;
     if (stars < 10) {
         alert("Недостаточно ⭐");
         return;
     }
 
-    spinning = true;
     stars -= 10;
-    starsEl.textContent = stars;
+    updateBalance();
 
-    const totalItems = reel.children.length;
-    const randomIndex = Math.floor(Math.random() * totalItems);
+    isSpinning = true;
+    spinBtn.disabled = true;
 
-    const offset = randomIndex * 100;
+    const randomIndex = Math.floor(Math.random() * items.length);
 
-    reel.style.transition = "transform 3s cubic-bezier(.17,.67,.83,.67)";
-    reel.style.transform = `translateX(-${offset}px)`;
+    const visibleWidth = document.querySelector(".spinner-container").offsetWidth;
+    const centerOffset = visibleWidth / 2 - itemWidth / 2;
+
+    const fullCycles = items.length * 10;
+    const targetIndex = fullCycles + randomIndex;
+
+    const finalOffset = targetIndex * itemWidth - centerOffset;
+
+    reel.style.transition = "transform 3s cubic-bezier(0.1, 0.9, 0.2, 1)";
+    reel.style.transform = `translateX(-${finalOffset}px)`;
 
     setTimeout(() => {
-        const winSymbol = reel.children[randomIndex].textContent;
 
-        if (winSymbol === "⭐") {
-            stars += 20;
-            alert("Вы выиграли 20 ⭐");
-        } else if (winSymbol === "💎") {
-            alert("Редкий приз 💎");
-        } else {
-            alert("Попробуй еще!");
+        // сброс позиции
+        reel.style.transition = "none";
+
+        const normalizedIndex = randomIndex + items.length * 2;
+        const normalizedOffset = normalizedIndex * itemWidth - centerOffset;
+
+        reel.style.transform = `translateX(-${normalizedOffset}px)`;
+
+        // НАЧИСЛЕНИЕ ВЫИГРЫША
+        const reward = items[randomIndex].reward;
+
+        if (reward > 0) {
+            stars += reward;
+            updateBalance();
+            alert(`Вы выиграли ${reward} ⭐`);
         }
 
-        starsEl.textContent = stars;
+        isSpinning = false;
+        spinBtn.disabled = false;
 
-        reel.style.transition = "none";
-        reel.style.transform = `translateX(0px)`;
-
-        spinning = false;
-    }, 3100);
+    }, 3000);
 });
-// NAVIGATION
+
+/* NAVIGATION */
+
 const navButtons = document.querySelectorAll('.nav button');
 const screens = document.querySelectorAll('.screen');
 

@@ -61,3 +61,18 @@ spinBtn.addEventListener("click", () => {
         spinning = false;
     }, 3100);
 });
+// NAVIGATION
+const navButtons = document.querySelectorAll('.nav button');
+const screens = document.querySelectorAll('.screen');
+
+navButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const target = button.getAttribute('data-screen');
+
+        screens.forEach(screen => {
+            screen.classList.remove('active');
+        });
+
+        document.getElementById(target).classList.add('active');
+    });
+});

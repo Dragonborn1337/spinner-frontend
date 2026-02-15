@@ -1,51 +1,44 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Spinner Mini App</title>
-    <link rel="stylesheet" href="/src/styles.css">
-</head>
 <body>
-
+<meta charset="UTF-8">
 <div class="app">
 
     <!-- HEADER -->
     <div class="header">
         <div class="balance">
             ⭐ <span id="stars">100</span>
+            &nbsp;&nbsp;
             TON <span id="ton">0.0</span>
         </div>
     </div>
 
-    <!-- PAGES -->
-    <div id="gamePage" class="page active">
-        <div class="spinner-wrapper">
+    <!-- SCREENS -->
+    <div id="gameScreen" class="screen active">
+        <div class="spinner-container">
             <div class="indicator"></div>
             <div class="reel" id="reel"></div>
         </div>
-
         <button id="spinBtn">🎰 Крутить (10 ⭐)</button>
     </div>
 
-    <div id="profilePage" class="page">
-        <h2>👤 Профиль</h2>
-        <p>Здесь будет информация о пользователе</p>
+    <div id="profileScreen" class="screen">
+        <h2>Профиль</h2>
+        <p>ID: <span id="userId">-</span></p>
+        <p>Username: <span id="username">-</span></p>
     </div>
 
-    <div id="adminPage" class="page">
-        <h2>⚙ Админка</h2>
-        <p>Панель управления</p>
+    <div id="adminScreen" class="screen">
+        <h2>Админ панель</h2>
+        <p>Тут будет управление пользователями</p>
     </div>
 
-    <!-- NAV -->
+    <!-- NAVIGATION -->
     <div class="nav">
-        <button data-page="gamePage">🎰</button>
-        <button data-page="profilePage">👤</button>
-        <button data-page="adminPage">⚙</button>
+        <button data-screen="gameScreen">🎰 Игра</button>
+        <button data-screen="profileScreen">👤 Профиль</button>
+        <button data-screen="adminScreen">⚙ Админ</button>
     </div>
 
 </div>
 
 <script type="module" src="/src/main.js"></script>
 </body>
-</html>

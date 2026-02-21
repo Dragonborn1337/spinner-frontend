@@ -1,4 +1,5 @@
 import './styles.css'
+import './app.js'
 import { state } from './state.js'
 
 console.log("=== FRONTEND STARTED ===");

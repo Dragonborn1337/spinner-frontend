@@ -25,10 +25,10 @@ const itemWidth = 100;
 function getTelegramId() {
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
-        return 1034032774; 
+        return tg.initDataUnsafe.user.id;;
     } else {
         console.log("🔥 DEV MODE ACTIVE");
-        return 1034032774; // ← Поставь свой telegram_id из БД
+        return tg.initDataUnsafe.user.id;; // ← Поставь свой telegram_id из БД
     }
 }
 

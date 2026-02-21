@@ -1,8 +1,21 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-    base: './', // ⚠️ важно для Telegram Mini App
-    build: {
-        outDir: 'dist'
+export default defineConfig(({ command }) => {
+    const isDev = command === 'serve'
+
+    return {
+        base: './',
+
+        server: isDev
+            ? {
+                host: true,      // чтобы localhost работал стабильно
+                port: 5173,
+                strictPort: true
+            }
+            : undefined,
+
+        build: {
+            outDir: 'dist'
+        }
     }
 })

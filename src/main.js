@@ -1,17 +1,15 @@
-import { initTelegram } from './telegram.js'
 import { state } from './state.js'
 
 console.log("=== FRONTEND STARTED ===");
 
-initTelegram();
-console.log('App state:', state);
-
 const tg = window.Telegram?.WebApp;
 
 if (!tg) {
-    console.log("❌ Not inside Telegram");
+    console.warn("Running outside Telegram (dev mode)");
 } else {
     console.log("✅ Telegram WebApp detected");
+
+    tg.expand();
     tg.ready();
 
     const API_URL = import.meta.env.VITE_API_URL;
@@ -22,25 +20,25 @@ if (!tg) {
             const initData = tg.initData;
 
             if (!initData) {
-                console.log("⚠ No initData received");
+                console.warn("No initData received");
                 return;
             }
 
-            console.log("InitData length:", initData.length);
-
             const response = await fetch(`${API_URL}/api/auth`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ initData })
             });
 
+            if (!response.ok) {
+                throw new Error("Auth failed");
+            }
+
             const data = await response.json();
-            console.log("✅ Auth success:", data);
+            console.log("Auth success:", data);
 
         } catch (err) {
-            console.error("❌ Auth error:", err);
+            console.error("Auth error:", err);
         }
     }
 

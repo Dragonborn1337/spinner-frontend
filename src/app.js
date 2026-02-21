@@ -15,7 +15,7 @@ const items = [
 let stars = 0;
 let isSpinning = false;
 
-const itemWidth = 100;
+const itemWidth = 0;
 
 
 // ==============================

@@ -36,7 +36,15 @@ if (!tg) {
             }
 
             const data = await response.json();
-            console.log("Auth success:", data);
+            console.log("✅ Auth success:", data);
+            localStorage.setItem('token', data.token);
+
+            state.user = data.user;
+
+            document.getElementById('stars').textContent = data.user.stars_balance;
+            document.getElementById('ton').textContent = data.user.ton_balance;
+            document.getElementById('userId').textContent = data.user.telegram_id;
+            document.getElementById('username').textContent = data.user.username || '—';
 
         } catch (err) {
             console.error("Auth error:", err);

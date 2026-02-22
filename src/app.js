@@ -1,172 +1,169 @@
-// ==============================
-// DOM
-// ==============================
+document.addEventListener("DOMContentLoaded", () => {
 
-const reel = document.getElementById("reel");
-const spinBtn = document.getElementById("spinBtn");
-const starsEl = document.getElementById("stars");
+    // ==============================
+    // DOM
+    // ==============================
 
-const items = [
-    { symbol: "🎁", type: "none", amount: 0 },
-    { symbol: "⭐", type: "stars", amount: 5 },
-    { symbol: "💎", type: "ton", amount: 0.1 },
-];
+    const reel = document.getElementById("reel");
+    const spinBtn = document.getElementById("spinBtn");
+    const starsEl = document.getElementById("stars");
 
-let stars = 0;
-let isSpinning = false;
-
-const itemWidth = 0;
-
-
-// ==============================
-// DEV / TELEGRAM MODE
-// ==============================
-
-function getTelegramId() {
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        return tg.initDataUnsafe.user.id;;
-    } else {
-        console.log("🔥 DEV MODE ACTIVE");
-        return tg.initDataUnsafe.user.id;; // ← Поставь свой telegram_id из БД
+    if (!reel || !spinBtn || !starsEl) {
+        console.error("DOM elements not found");
+        return;
     }
-}
 
+    const items = [
+        { symbol: "🎁", type: "none", amount: 0 },
+        { symbol: "⭐", type: "stars", amount: 5 },
+        { symbol: "💎", type: "ton", amount: 0.1 },
+    ];
 
-// ==============================
-// BUILD REEL
-// ==============================
+    let stars = 0;
+    let isSpinning = false;
 
-function buildReel() {
-    reel.innerHTML = "";
+    // ==============================
+    // DEV / TELEGRAM MODE
+    // ==============================
 
-    for (let i = 0; i < 30; i++) {
-        items.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "item";
-            div.textContent = item.symbol;
-            reel.appendChild(div);
-        });
-    }
-}
-
-buildReel();
-
-
-// ==============================
-// BALANCE
-// ==============================
-
-function updateBalance() {
-    starsEl.textContent = stars;
-}
-
-
-// ==============================
-// ANIMATION
-// ==============================
-
-function animateReel(index, reward) {
-
-    const visibleWidth = document.querySelector(".spinner-container").offsetWidth;
-    const centerOffset = visibleWidth / 2 - itemWidth / 2;
-
-    const fullCycles = items.length * 10;
-    const targetIndex = fullCycles + index;
-    const finalOffset = targetIndex * itemWidth - centerOffset;
-
-    reel.style.transition = "transform 3s cubic-bezier(0.1, 0.9, 0.2, 1)";
-    reel.style.transform = `translateX(-${finalOffset}px)`;
-
-    setTimeout(() => {
-
-        reel.style.transition = "none";
-
-        const normalizedIndex = index + items.length * 2;
-        const normalizedOffset = normalizedIndex * itemWidth - centerOffset;
-
-        reel.style.transform = `translateX(-${normalizedOffset}px)`;
-
-        if (reward.amount > 0) {
-            alert(`Вы выиграли ${reward.amount} ${reward.type === 'stars' ? '⭐' : 'TON'}`);
+    function getTelegramId() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            return window.Telegram.WebApp.initDataUnsafe.user.id;
+        } else {
+            console.log("🔥 DEV MODE ACTIVE");
+            return import.meta.env.VITE_DEV_TELEGRAM_ID || 0;
         }
+    }
 
-        isSpinning = false;
-        spinBtn.disabled = false;
+    // ==============================
+    // BUILD REEL
+    // ==============================
 
-    }, 3000);
-}
+    function buildReel() {
+        reel.innerHTML = "";
 
+        for (let i = 0; i < 30; i++) {
+            items.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "item";
+                div.textContent = item.symbol;
+                reel.appendChild(div);
+            });
+        }
+    }
 
-// ==============================
-// SPIN
-// ==============================
+    buildReel();
 
-spinBtn.addEventListener("click", async () => {
+    // ==============================
+    // BALANCE
+    // ==============================
 
-    if (isSpinning) return;
+    function updateBalance() {
+        starsEl.textContent = stars;
+    }
 
-    isSpinning = true;
-    spinBtn.disabled = true;
+    // ==============================
+    // ANIMATION
+    // ==============================
 
-    try {
+    function animateReel(index, reward) {
 
-        const telegram_id = getTelegramId();
+        const itemWidth = reel.querySelector(".item").offsetWidth;
+        const visibleWidth = document.querySelector(".spinner-container").offsetWidth;
+        const centerOffset = visibleWidth / 2 - itemWidth / 2;
 
-        const response = await fetch("https://spinner-backend-f1b0.onrender.com/api/spin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ telegram_id })
-        });
+        const fullCycles = items.length * 10;
+        const targetIndex = fullCycles + index;
+        const finalOffset = targetIndex * itemWidth - centerOffset;
 
-        const data = await response.json();
+        reel.style.transition = "transform 3s cubic-bezier(0.1, 0.9, 0.2, 1)";
+        reel.style.transform = `translateX(-${finalOffset}px)`;
 
-        if (!response.ok) {
-            alert(data.error);
+        setTimeout(() => {
+
+            reel.style.transition = "none";
+
+            const normalizedIndex = index + items.length * 2;
+            const normalizedOffset = normalizedIndex * itemWidth - centerOffset;
+
+            reel.style.transform = `translateX(-${normalizedOffset}px)`;
+
+            if (reward.amount > 0) {
+                alert(`Вы выиграли ${reward.amount} ${reward.type === 'stars' ? '⭐' : 'TON'}`);
+            }
+
             isSpinning = false;
             spinBtn.disabled = false;
-            return;
-        }
 
-        stars = data.stars_balance;
-        updateBalance();
-
-        let index = items.findIndex(item =>
-            item.type === data.reward.type &&
-            item.amount === data.reward.amount
-        );
-
-        if (index === -1) index = 0;
-
-        animateReel(index, data.reward);
-
-    } catch (error) {
-        alert("Ошибка сервера");
-        console.error(error);
-        isSpinning = false;
-        spinBtn.disabled = false;
+        }, 3000);
     }
-});
 
+    // ==============================
+    // SPIN
+    // ==============================
 
-// ==============================
-// NAVIGATION (если есть вкладки)
-// ==============================
+    spinBtn.addEventListener("click", async () => {
 
-const navButtons = document.querySelectorAll('.nav button');
-const screens = document.querySelectorAll('.screen');
+        if (isSpinning) return;
 
-navButtons.forEach(button => {
-    button.addEventListener('click', () => {
+        isSpinning = true;
+        spinBtn.disabled = true;
 
-        const target = button.getAttribute('data-screen');
+        try {
 
-        screens.forEach(screen => {
-            screen.classList.remove('active');
-        });
+            const telegram_id = getTelegramId();
 
-        document.getElementById(target).classList.add('active');
+            const response = await fetch(
+                "https://spinner-backend-f1b0.onrender.com/api/spin",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ telegram_id })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.error);
+                isSpinning = false;
+                spinBtn.disabled = false;
+                return;
+            }
+
+            stars = data.stars_balance;
+            updateBalance();
+
+            let index = items.findIndex(item =>
+                item.type === data.reward.type &&
+                item.amount === data.reward.amount
+            );
+
+            if (index === -1) index = 0;
+
+            animateReel(index, data.reward);
+
+        } catch (error) {
+            console.error(error);
+            alert("Ошибка сервера");
+            isSpinning = false;
+            spinBtn.disabled = false;
+        }
     });
+
+    // ==============================
+    // NAVIGATION
+    // ==============================
+
+    const navButtons = document.querySelectorAll('.nav button');
+    const screens = document.querySelectorAll('.screen');
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const target = button.getAttribute('data-screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            document.getElementById(target).classList.add('active');
+        });
+    });
+
 });

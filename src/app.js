@@ -27,14 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
 
     function getTelegramId() {
-        if (window.Telegram && window.Telegram.WebApp) {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe?.user) {
             return window.Telegram.WebApp.initDataUnsafe.user.id;
-        } else {
-            console.log("🔥 DEV MODE ACTIVE");
-            return import.meta.env.VITE_DEV_TELEGRAM_ID || 0;
         }
-    }
 
+        console.log("DEV MODE");
+        return 0;
+    }
     // ==============================
     // BUILD REEL
     // ==============================
